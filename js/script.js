@@ -65,6 +65,7 @@ function requests(url, request='none', filter='none') {
                     const $img = d.createElement('img');
                     $img.src = `${el.strDrinkThumb}`;
                     $img.alt = `${el.strDrink}`;
+                    $img.loading = 'lazy';
                     $picture.appendChild($img);
 
                     const $h2 = d.createElement('h2');
@@ -178,6 +179,7 @@ function requests(url, request='none', filter='none') {
                     const $img = d.createElement('img');
                     $img.src = `${el.strDrinkThumb}`;
                     $img.alt = `${el.strDrink}`;
+                    $img.loading = 'lazy';
                     $picture.appendChild($img);
 
                     const $h2 = d.createElement('h2');
