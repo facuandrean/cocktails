@@ -116,6 +116,7 @@ function requests(url, request='none', filter='none') {
     
                         const $instructions = d.createElement('p');
                         $instructions.innerHTML = `${el.strInstructions}`;
+                        $instructions.style.textOverflow = 'ellipsis';
                         $instructions.style.color = "white";
     
                         $div_text_instructions.appendChild($title_instructions);
@@ -124,8 +125,9 @@ function requests(url, request='none', filter='none') {
                         const $preparation_link = d.createElement('a');
                         $preparation_link.href = `${el.strVideo}`;
                         if ($preparation_link.href.includes('null')) {
-                            $preparation_link.innerHTML = 'No link';
-                            $preparation_link.style.cursor = 'not-allowed';
+                            $preparation_link.href = `https://www.youtube.com/results?search_query=how+to+make+the+cocktail+${el.strDrink}`;
+                            $preparation_link.innerHTML = 'Search on youtube';
+                            $preparation_link.target = '_black';
                         } else {
                             $preparation_link.innerHTML = 'Video on youtube';
                             $preparation_link.target = '_black';

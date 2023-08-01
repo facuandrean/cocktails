@@ -232,7 +232,7 @@ main .search input {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    grid-gap: 50px;
+    grid-gap: 30px;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
 }
@@ -265,6 +265,9 @@ main .search input {
     backface-visibility: show;
     transform: rotateY(180deg);
     top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     z-index: 99999;
     justify-content: center;
     align-items: center;
@@ -285,8 +288,12 @@ main .search input {
 .card-back p {
     font-size: .9rem;
     width: 100%;
-    height: auto;
+    height: 150px;
+    overflow-y: auto;
     margin: 0;
+    text-overflow: ellipsis;
+    display: block;
+    padding: .5rem;
 }
 
 .card-back a {
@@ -360,7 +367,6 @@ main .search input {
 }
 
 .translate {
-    /* top: -90vh; */
     transform: translateY(-90vh);
 }
 
@@ -376,16 +382,28 @@ main .search input {
 }
 
 .filter {
-    /* nos permite ocultar o discriminar los resultados que no coincidan con la busqueda, como le queremos poner transiciones, no se puede con un display none, asique si le queremos poner transiciones debemos usar visibility hidden, pero si no le queremos poner transiciones, con display none basta */
-    /* display: none; */
     visibility: hidden;
     opacity: 0;
-    /* esta propiedad de order está disponible solo para grid o flex, lo que hace es que las que tengan order activada, se van a ir moviendo hacia el final, como todas las tarjetas con filter van a tener order 1, estas se van a ir al final dejando al principio las tarjetas con order 0 por defecto, que sería las que coincidan con la busqueda del usuario */
     order: 1;
 }
 
 .open {
     rotate: 180deg;
+}
+
+::-webkit-scrollbar {
+    width: 5px; 
+    border-radius: 10rem;
+    margin: .4rem .5rem .4rem 0rem
+}
+  
+::-webkit-scrollbar-thumb {
+background-color: gray; 
+}
+
+
+::-webkit-scrollbar-track {
+background-color: black;
 }
 
 /* Mediaqueries */
