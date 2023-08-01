@@ -83,7 +83,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* color: white; */
     position: fixed;
     top: 0;
     background-color: rgba(0, 0, 0);
@@ -97,12 +96,12 @@ body {
     align-items: center;
     justify-content: flex-start;
     padding-left: 1rem;
-    color: black;
-    filter: drop-shadow(0 0 .05rem white);
+    color: white;
 }
 
-.header .logo h2 {
+.header .logo h2 a {
     font-weight: 800;
+    color: white;
     font-size: 2rem;
 }
 
@@ -112,7 +111,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    filter: drop-shadow(0 0 .05rem white);
+}
+
+.hamburger--collapse .hamburger-inner,
+.hamburger--collapse .hamburger-inner::before,
+.hamburger--collapse .hamburger-inner::after {
+    background-color: white !important;
 }
 
 .nav {
@@ -151,7 +155,6 @@ body {
 
 .options-alcoholic a,
 .options-category a {
-    /* color: rgb(184, 180, 180) !important; */
     color: gray !important;
 }
 
@@ -206,14 +209,9 @@ main .search input {
 
 .navigation {
     overflow: hidden;
-    margin: 0 auto;
+    margin: 0 auto 1.5rem auto;
     width: 80%;
-    margin-bottom: 1.5rem;
     text-align: center;
-}
-
-.navigation span {
-    white-space: nowrap;
 }
 
 .navigation span:not(:first-child) {
@@ -280,7 +278,7 @@ main .search input {
 }
 
 .card-back h2 {
-    font-size: 1.2rem !important;
+    font-size: 1.2rem;
     margin: 0;
 }
 
@@ -367,8 +365,7 @@ main .search input {
 }
 
 .attribution {
-    margin-top: 5rem;
-    margin-bottom: 2rem;
+    margin: 5rem 0rem 2rem 0rem;
     text-align: center;
     font-size: 16px;
     color: white;

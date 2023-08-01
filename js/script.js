@@ -14,6 +14,7 @@ const $search_by_ingredient_input = d.querySelector(".search_by_ingredient");
 const $btnUp = d.querySelector('.up');
 
 let count = 0;
+let inputTimer;
 
 function iterateIngredients(cocktail) {
     let array = [];
@@ -46,129 +47,134 @@ function requests(url, request='none', filter='none') {
             let json = JSON.parse(xhr.responseText);
     
             if (request == 'list_cocktails') {
-                // Limpiar el contenido del contenedor 'xhr'
                 $xhr.innerHTML = '';
 
-                json.drinks.forEach((el) => {
-                    console.log(el)
-                    count += 1;
-        
-                    const $card = d.createElement('div');
-                    $card.classList.add('card');
-
-                    const $card_front = d.createElement('div');
-                    $card_front.classList.add('card-front');
-                    const $card_back = d.createElement('div');
-                    $card_back.classList.add('card-back');
-
-                    const $picture = d.createElement('picture');
-                    const $img = d.createElement('img');
-                    $img.src = `${el.strDrinkThumb}`;
-                    $img.alt = `${el.strDrink}`;
-                    $img.loading = 'lazy';
-                    $picture.appendChild($img);
-
-                    const $h2 = d.createElement('h2');
-                    $h2.innerHTML = `${el.strDrink}`;
-
-                    const $h3 = d.createElement('h3');
-                    $h3.innerHTML = `${el.strCategory}`;
-
-                    const $ol = d.createElement('ol');
-                    $ol.setAttribute('data-ol-id', count);
-
-                    const $h4 = d.createElement('h4');
-                    $h4.textContent = 'Ingredients';
-
-                    const $preparation = d.createElement('li');
-                    $preparation.style.position = 'relative';
-                    $preparation.style.zIndex = 9999;
-                    $preparation.style.margin = '2rem 0rem';
-
-                    const $a = d.createElement('a');
-                    $a.textContent = 'See preparation ▶';
-                    $a.href = '#preparation';
-                    $a.style.color = 'rgb(184, 180, 180)';
-                    $a.style.fontSize = '1.2rem';
-                    $a.style.cursor = 'pointer';
-                    $a.id = 'flipLink';
-        
-                    let ingredients_array = iterateIngredients(el);
-                    loadIngredients($ol, ingredients_array, $h4, $preparation, $a);
-
-                    $card.setAttribute('data-card-id', count);
-
-                    $card_front.appendChild($picture);
-                    $card_front.appendChild($h2);
-                    $card_front.appendChild($h3);
-                    $card_front.appendChild($ol);
-
-                    const $div_text_instructions = d.createElement('div');
-                    $div_text_instructions.style.width = '100%';
-                    $div_text_instructions.style.height = '200px';
-
-                    const $title_instructions = d.createElement('h2');
-                    $title_instructions.innerHTML = 'Preparation:';
-
-                    const $instructions = d.createElement('p');
-                    $instructions.innerHTML = `${el.strInstructions}`;
-                    $instructions.style.color = "white";
-
-                    $div_text_instructions.appendChild($title_instructions);
-                    $div_text_instructions.appendChild($instructions);
-                    
-                    const $preparation_link = d.createElement('a');
-                    $preparation_link.href = `${el.strVideo}`;
-                    if ($preparation_link.href.includes('null')) {
-                        $preparation_link.innerHTML = 'No link';
-                        $preparation_link.style.cursor = 'not-allowed';
-                    } else {
-                        $preparation_link.innerHTML = 'Video on youtube';
-                        $preparation_link.target = '_black';
-                    }
-                    $preparation_link.style.color = "gray";
-                    
-                    const $unFlip = d.createElement('a');
-                    $unFlip.id = 'unFlipLink';
-                    $unFlip.textContent = '◀ Back';
-                    $unFlip.style.cursor = 'pointer';
-                    $unFlip.style.color = 'gray';
-                    $unFlip.style.display = 'block';
-
-                    $card_back.appendChild($div_text_instructions);
-                    $card_back.appendChild($preparation_link);
-                    $card_back.appendChild($unFlip);
-                    $card_back.style.backgroundColor = "rgb(2,0,36)";
-
-                               
-                    $card.appendChild($card_front);
-                    $card.appendChild($card_back);
-                    
-                    $fragment.appendChild($card);
-                });
-
-                $xhr.appendChild($fragment);
-
-                const $cards = d.querySelectorAll('.card');
-
-                $cards.forEach(card => {
-                    card.addEventListener('click', handleClick);
-                    const HTMLlis = card.children[0].children[3].getElementsByTagName('li');
-                    const lastLis = HTMLlis[HTMLlis.length - 1];
-                    lastLis.addEventListener('click', e => {
-                        card.classList.toggle('flipped')
-                        card.children[1].style.display = 'flex';
+                if (json.drinks == null) {
+                    $xhr.innerHTML = 'No items';
+                    $xhr.style.textAlign = 'center';
+                    $xhr.style.fontSize = '1.5rem';
+                } else {
+                    json.drinks.forEach((el) => {
+                        count += 1;
+            
+                        const $card = d.createElement('div');
+                        $card.classList.add('card');
+    
+                        const $card_front = d.createElement('div');
+                        $card_front.classList.add('card-front');
+                        const $card_back = d.createElement('div');
+                        $card_back.classList.add('card-back');
+    
+                        const $picture = d.createElement('picture');
+                        const $img = d.createElement('img');
+                        $img.src = `${el.strDrinkThumb}`;
+                        $img.alt = `${el.strDrink}`;
+                        $img.loading = 'lazy';
+                        $picture.appendChild($img);
+    
+                        const $h2 = d.createElement('h2');
+                        $h2.innerHTML = `${el.strDrink}`;
+    
+                        const $h3 = d.createElement('h3');
+                        $h3.innerHTML = `${el.strCategory}`;
+    
+                        const $ol = d.createElement('ol');
+                        $ol.setAttribute('data-ol-id', count);
+    
+                        const $h4 = d.createElement('h4');
+                        $h4.textContent = 'Ingredients';
+    
+                        const $preparation = d.createElement('li');
+                        $preparation.style.position = 'relative';
+                        $preparation.style.zIndex = 9999;
+                        $preparation.style.margin = '2rem 0rem';
+    
+                        const $a = d.createElement('a');
+                        $a.textContent = 'See preparation ▶';
+                        $a.href = '#preparation';
+                        $a.style.color = 'rgb(184, 180, 180)';
+                        $a.style.fontSize = '1.2rem';
+                        $a.style.cursor = 'pointer';
+                        $a.id = 'flipLink';
+            
+                        let ingredients_array = iterateIngredients(el);
+                        loadIngredients($ol, ingredients_array, $h4, $preparation, $a);
+    
+                        $card.setAttribute('data-card-id', count);
+    
+                        $card_front.appendChild($picture);
+                        $card_front.appendChild($h2);
+                        $card_front.appendChild($h3);
+                        $card_front.appendChild($ol);
+    
+                        const $div_text_instructions = d.createElement('div');
+                        $div_text_instructions.style.width = '100%';
+                        $div_text_instructions.style.height = '200px';
+    
+                        const $title_instructions = d.createElement('h2');
+                        $title_instructions.innerHTML = 'Preparation:';
+    
+                        const $instructions = d.createElement('p');
+                        $instructions.innerHTML = `${el.strInstructions}`;
+                        $instructions.style.color = "white";
+    
+                        $div_text_instructions.appendChild($title_instructions);
+                        $div_text_instructions.appendChild($instructions);
+                        
+                        const $preparation_link = d.createElement('a');
+                        $preparation_link.href = `${el.strVideo}`;
+                        if ($preparation_link.href.includes('null')) {
+                            $preparation_link.innerHTML = 'No link';
+                            $preparation_link.style.cursor = 'not-allowed';
+                        } else {
+                            $preparation_link.innerHTML = 'Video on youtube';
+                            $preparation_link.target = '_black';
+                        }
+                        $preparation_link.style.color = "gray";
+                        
+                        const $unFlip = d.createElement('a');
+                        $unFlip.id = 'unFlipLink';
+                        $unFlip.textContent = '◀ Back';
+                        $unFlip.style.cursor = 'pointer';
+                        $unFlip.style.color = 'gray';
+                        $unFlip.style.display = 'block';
+    
+                        $card_back.appendChild($div_text_instructions);
+                        $card_back.appendChild($preparation_link);
+                        $card_back.appendChild($unFlip);
+                        $card_back.style.backgroundColor = "rgb(2,0,36)";
+    
+                                   
+                        $card.appendChild($card_front);
+                        $card.appendChild($card_back);
+                        
+                        $fragment.appendChild($card);
                     });
-                    const unFlip = card.children[1].children[2];
-                    unFlip.addEventListener('click', e => {
-                        card.classList.toggle('flipped')
-                        card.children[1].style.display = 'none';
-                    })
-                });
+    
+                    $xhr.appendChild($fragment);
+    
+                    const $cards = d.querySelectorAll('.card');
+    
+                    $cards.forEach(card => {
+                        card.addEventListener('click', handleClick);
+                        const HTMLlis = card.children[0].children[3].getElementsByTagName('li');
+                        const lastLis = HTMLlis[HTMLlis.length - 1];
+                        lastLis.addEventListener('click', e => {
+                            card.classList.toggle('flipped')
+                            card.children[1].style.display = 'flex';
+                        });
+                        const unFlip = card.children[1].children[2];
+                        unFlip.addEventListener('click', e => {
+                            card.classList.toggle('flipped')
+                            card.children[1].style.display = 'none';
+                        })
+                    });
+
+                }
+
             };
 
             if (request == 'filter_cocktail') {
-                // Limpiar el contenido del contenedor 'xhr'
                 $xhr.innerHTML = '';
 
                 json.drinks.forEach((el) => {
@@ -179,7 +185,6 @@ function requests(url, request='none', filter='none') {
                     const $img = d.createElement('img');
                     $img.src = `${el.strDrinkThumb}`;
                     $img.alt = `${el.strDrink}`;
-                    $img.loading = 'lazy';
                     $picture.appendChild($img);
 
                     const $h2 = d.createElement('h2');
@@ -209,16 +214,6 @@ function requests(url, request='none', filter='none') {
                 $cards.forEach(card => {
                     card.addEventListener('click', handleClick);
                 });
-
-                // d.getElementById('flipLink').addEventListener('click', function(e) {
-                //     e.preventDefault();
-                //     d.querySelector('.card')
-                // });
-                
-                // d.getElementById('unFlipLink').addEventListener('click', function(e) {
-                //     e.preventDefault();
-                //     d.querySelector('.card').classList.toggle('flipped');
-                // });
             }
 
         } else {
@@ -232,6 +227,7 @@ function requests(url, request='none', filter='none') {
     xhr.send();
 }
 
+
 function handleClick(e) {
     const $ol = e.currentTarget.querySelector('ol');
     
@@ -242,11 +238,20 @@ function handleClick(e) {
     }
 };
 
-// function flipCard(e) {
-    
-//     e
 
-// }
+function handleInputChange() {
+    clearTimeout(inputTimer);
+  
+    inputTimer = setTimeout(sendRequest, 1000);
+}
+
+
+function sendRequest() {
+    const inputValue = $search_by_ingredient_input.children[0].value;
+
+    requests(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${inputValue}`, 'filter_cocktail', `Ingredient: ${inputValue}`);
+}
+
 
 function navigation(e) {
     if (e.target.matches('.navigation a')) {
@@ -255,6 +260,7 @@ function navigation(e) {
         requests(`https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${letter}`, 'list_cocktails');
     }
 }
+
 
 function toggleItem(element, i) {
     const openItems = d.querySelectorAll('.show');
@@ -273,9 +279,7 @@ function toggleItem(element, i) {
     element.classList.toggle("show");
 }
 
-// Función para verificar la posición y mostrar/ocultar el botón "Up"
 function toggleBtnUpVisibility() {
-    // Obtener la posición actual de desplazamiento vertical (scroll)
     const scrollY = window.scrollY;
 
     $btnUp.style.transition = 'opacity .5s ease'
@@ -294,6 +298,18 @@ function toggleBtnUpVisibility() {
 d.addEventListener('DOMContentLoaded', e => {
     
     requests('https://www.thecocktaildb.com/api/json/v1/1/search.php?f=a', 'list_cocktails', 'none');
+
+    $search_cocktail.addEventListener('search', e => {
+        location.reload();
+    });
+
+    d.querySelector('.navigation').addEventListener('click', navigation);
+
+    $search_by_ingredient_input.addEventListener('search', e => {
+        location.reload();
+    });
+
+    $search_by_ingredient_input.children[0].addEventListener('input', handleInputChange);
     
     $filter_alcoholic_link.addEventListener("click", function (event) {
         event.preventDefault();
@@ -381,7 +397,6 @@ d.addEventListener('DOMContentLoaded', e => {
 
 });
 
-d.querySelector('.navigation').addEventListener('click', navigation);
 
 d.addEventListener('click', e => {
     if (e.target.matches('.hamburger') || e.target.matches('.hamburger *')) {
@@ -394,6 +409,7 @@ d.addEventListener('click', e => {
         }
     }
 });
+
 
 d.addEventListener('keyup', e => {
     if (e.target === $search_cocktail) {
@@ -408,33 +424,15 @@ d.addEventListener('keyup', e => {
         }
         
         const $cards_search = d.querySelectorAll('.card');
+
         $cards_search.forEach(card => {
-            // convertimos los textos de las figures en minusculas y además usamos includes que devuelve un booleano si el texto que tienen entre paréntesis está en el elemento o no.
-            card.children[1].outerText.toLowerCase().includes(e.target.value) ? card.classList.remove('filter') : card.classList.add('filter');
+            card.children[1].outerText.toLowerCase().includes(e.target.value) 
+            ? card.classList.remove('filter') 
+            : card.classList.add('filter');
         })
 
-        
-    }
-
-    if (e.target === $search_by_ingredient_input.children[0]) {
-        if (e.key === "Escape") {
-            e.target.value = "";
-        }
-
-        if (e.target.value == '') {
-            requests(`https://www.thecocktaildb.com/api/json/v1/1/search.php?f=a`, 'list_cocktails');
-        } else {
-            requests(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${e.target.value}`, 'filter_cocktail', `Ingredient: ${e.target.value}`);
-        }
-
-        const $cards_search = d.querySelectorAll('.card');
-        $cards_search.forEach(card => {
-            // convertimos los textos de las figures en minusculas y además usamos includes que devuelve un booleano si el texto que tienen entre paréntesis está en el elemento o no.
-            card.children[1].outerText.toLowerCase().includes(e.target.value) ? card.classList.remove('filter') : card.classList.add('filter');
-        })
     }
 })
 
 
-// Agregar el evento scroll al documento
 d.addEventListener('scroll', toggleBtnUpVisibility);
